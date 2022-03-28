@@ -61,24 +61,25 @@ class ZooplaScraper:
             dict_writer.writerows(self.listings)
 
     def scrape(self):
-
+        # Obtain main page
         html = self.__download_html()
         soup = BeautifulSoup(html, 'html.parser')
 
+        # Obtain total number of listings and pages from main page
         self.__get_total_results(soup)
         self.__get_total_pages(soup)
 
+        # Scrape every listing card available in the page
         self.__scrape_listings(soup)
 
+        # Iterate through every page and scrape the listings cards on each of them
         for page_number in range(2, self.total_pages + 1):
-
             html = self.__download_html(path=f"/?pn={page_number}")
             soup = BeautifulSoup(html, 'html.parser')
-
             self.__scrape_listings(soup)
 
+        # Double check the number of listings obtained and let the user know
         if len(self.listings) == self.total_results:
             print("All listings have been downloaded successfully")
         else:
             print("Some listings have not been downloaded for some reason")
-
